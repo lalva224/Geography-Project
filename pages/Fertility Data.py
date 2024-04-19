@@ -1,31 +1,16 @@
 import streamlit as st
-import folium as fl
-from streamlit_folium import st_folium
-from streamlit_folium import folium_static
-import time
-import requests
-import pandas as pd
 import os
 from dotenv import load_dotenv
+import requests
+import pandas as pd
 
 load_dotenv()
 
-
-def get_country(lat,lng):
-    global SELECTED_COUNTRY
-    URL = f'http://api.geonames.org/countryCodeJSON?lat={lat}&lng={lng}&username=lalva224'
-    response = requests.get(URL)
-    data = response.json()
-    country = data["countryName"]
-    SELECTED_COUNTRY = country
-    
-
-    #get some of their data
-
+st.header('Fertility Rate  starting 2017')
 def get_fertility_rate():
     url = "https://geography4.p.rapidapi.com/apis/geography/v1/fertility/"
 
-    querystring = {"name":SELECTED_COUNTRY}
+    querystring = {"name":st.session_state['country']}
 
     headers = {
         "X-RapidAPI-Key": os.getenv('X-RapidAPI-Key'),
@@ -48,21 +33,6 @@ def get_fertility_rate():
         st.header(country_name)
         st.line_chart(df)
         # st.write(response.json())
-    
-    
-   
-INDEX = 0
-# global clicked_location
-m = fl.Map()
-m.add_child(fl.ClickForMarker(popup='Clicked Location'))
 
-
-map = st_folium(m, height=350, width=700)
-
-if st.button('Select Country'):
-    lat = map['last_clicked']['lat']
-    lng = map['last_clicked']['lng']
-    get_country(lat,lng)
-
-    
-
+if 'country' in st.session_state and st.session_state['country']!=None:   
+    get_fertility_rate()
