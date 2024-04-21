@@ -7,6 +7,8 @@ import requests
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import folium
+
 
 load_dotenv()
 
@@ -20,8 +22,24 @@ def get_country(lat,lng):
         st.error('No country selected!')   
     else:    
         country = data["countryName"]
+        country_code = data["countryCode"]
+        st.session_state['countryCode'] = country_code
         st.session_state['country'] = country
+        st.success(f'{country} selected')
 
+# def get_country(lat,lng):
+#     API_KEY = os.getenv('OPEN_CAGE_KEY')
+#     URL = f'https://api.opencagedata.com/geocode/v1/json?q={lat}%2C{lng}&key={API_KEY}'
+#     response = requests.get(URL)
+#     data = response.json()
+
+#     country = data['results'][0]['components']['country']
+#     countryCode = data['results'][0]['components']['ISO_3166-1_alpha-2']
+#     st.session_state['country'] = country
+#     st.session_state['countryCode'] = countryCode
+#     st.success(f'{country} selected')
+  
+    
 
 
 
@@ -31,7 +49,10 @@ def get_country(lat,lng):
 # global clicked_location
 m = fl.Map()
 m.add_child(fl.ClickForMarker(popup='Clicked Location'))
+# m = folium.Map()
+# popup1 = folium.LatLngPopup()
 
+# m.add_child(popup1)
 
 map = st_folium(m, height=350, width=700)
 
